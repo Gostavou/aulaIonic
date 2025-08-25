@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
-import { AlertController, IonButton } from '@ionic/angular/standalone';
-import { FormsModule } from '@angular/forms';
+import { IonicModule, AlertController } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';   
 import { Router } from '@angular/router';
 import { ContatoService } from 'src/app/service/contato.service';
 import { Contato } from 'src/app/model/contato';
-import { IonDatetime } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons'; 
+import { personOutline, callOutline } from 'ionicons/icons'; 
 
 @Component({
   selector: 'app-cadastrar',
@@ -16,49 +16,73 @@ import { IonDatetime } from '@ionic/angular/standalone';
   imports: [IonicModule, CommonModule, FormsModule]
 })
 export class CadastrarPage implements OnInit {
-  nome!:string;
-  telefone!:string;
+  nome!: string;
+  telefone!: string;
   dataNascimento!: string;
   genero!: string;
-  maxDate: string;
+  maxDate!: string;
 
-  constructor(private alertController: AlertController, 
-    private router:Router,
-    private contatoService: ContatoService) { 
-      let hoje = new Date();
-      this.maxDate = hoje.toISOString().split('T')[0]; 
-    }
-
-  ngOnInit() {
+  constructor(
+    private contatoService: ContatoService,
+    private router: Router,
+    private alertController: AlertController
+  ) { 
+    const hoje = new Date();
+    this.maxDate = hoje.toISOString().split('T')[0];
+    
+    addIcons({
+      'person-outline': personOutline,
+      'call-outline': callOutline
+    });
   }
 
-  cadastrar(){
-    if(!this.validar(this.nome) || !this.validar(this.telefone)){
-      console.log("Nome obrigatório")
-      this.presentAlert("Erro ao Cadastrar","Campo Obrigatório")
+  ngOnInit() {}
+
+  cadastrar() {
+    const camposObrigatorios = [
+      { nome: 'nome', valor: this.nome, label: 'Nome' },
+      { nome: 'telefone', valor: this.telefone, label: 'Telefone' }
+    ];
+
+    const erroValidacao = this.validarCamposObrigatorios(camposObrigatorios);
+
+    if (erroValidacao) {
+      this.mostrarAlerta('Erro ao Cadastrar', erroValidacao);
       return;
     }
-    let contato: Contato = new Contato(this.nome, this.telefone, this.dataNascimento, this.genero);
-    this.contatoService.create(contato)
-    this.presentAlert("Sucesso","Contato Cadastrado")
-    this.router.navigate(["/home"])
+
+    const contato: Contato = new Contato(
+      this.nome,
+      this.telefone,
+      this.genero,
+      this.dataNascimento || ''
+    );
+
+    this.contatoService.create(contato);
+    this.mostrarAlerta('Sucesso', 'Contato Cadastrado');
+    this.router.navigate(['/home']);
   }
 
-  private validar(campo: any) : boolean{
-    if(!campo){
-      return false;
+  private validarCamposObrigatorios(campos: Array<{nome: string, valor: any, label: string}>): string | null {
+    for (const campo of campos) {
+      if (!this.campoValido(campo.valor)) {
+        return `Campo obrigatório: ${campo.label}`;
+      }
     }
-      return true
-    }
-    
-    async presentAlert(subHeader:string, message:string) {
+    return null;
+  }
+
+  private campoValido(campo: any): boolean {
+    return campo != null && campo.toString().trim().length > 0;
+  }
+
+  private async mostrarAlerta(subheader: string, message: string) {
     const alert = await this.alertController.create({
       header: 'Agenda de Contatos',
-      subHeader: subHeader,
+      subHeader: subheader,
       message: message,
       buttons: ['Ok'],
     });
     await alert.present();
   }
-
 }

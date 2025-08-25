@@ -1,44 +1,50 @@
-<ion-header>
+<ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
+      <ion-back-button defaultHref="/home">
+      </ion-back-button>
     </ion-buttons>
-    <ion-title>Cadastrar Contato</ion-title>
+    <ion-title>Detalhes do Contato</ion-title>
   </ion-toolbar>
 </ion-header>
 
+
 <ion-content [fullscreen]="true">
+  <ion-item>
+    <ion-label>Habilitar Edição</ion-label>
+    <ion-toggle color="success"(ionChange)="alterarEdicao()"></ion-toggle>
+  </ion-item>
   <ion-list>
-    <ion-item lines="none" class="with-icon">
-      <ion-icon name="person-outline" slot="start"></ion-icon>
+    <ion-item lines="none">
       <ion-input placeholder="Nome" [(ngModel)]="nome"></ion-input>
     </ion-item>
-    
-    <ion-item lines="none" class="with-icon">
-      <ion-icon name="call-outline" slot="start"></ion-icon>
-      <ion-input placeholder="Telefone" type="number" [(ngModel)]="telefone"></ion-input>
-    </ion-item>
-    
     <ion-item lines="none">
-      <ion-select placeholder="Gênero" [(ngModel)]="genero">
+      <ion-input placeholder="Telefone" type="number" [(ngModel)]="telefone"disabled="{{editar}}"></ion-input>
+    </ion-item>
+    <ion-item lines="none">
+      <ion-select placeholder="Gênero" [(ngModel)]="genero"disabled="{{editar}}">
         <ion-select-option value="Não Declarar">Não Declarar</ion-select-option>
         <ion-select-option value="Feminino">Feminino</ion-select-option>
         <ion-select-option value="Masculino">Masculino</ion-select-option>
       </ion-select>
     </ion-item>
-    
     <ion-item lines="none">
-      <ion-datetime-button datetime="datetime"></ion-datetime-button>
+      <ion-datetime-button datetime="datetime" disabled="{{editar}}"></ion-datetime-button>
       <ion-modal [keepContentsMounted]="true">
         <ng-template>
           <ion-datetime id="datetime" [(ngModel)]="dataNascimento"
-            display-format="DD/MM/YYYY"
+            display-format="DD/MM/YYYY" 
             placeholder="Selecione a data de Nascimento"
             [max]="maxDate">
           </ion-datetime>
         </ng-template>
       </ion-modal>
     </ion-item>
+    <ion-button expand="block" (click)="salvar()"
+    disabled="{{editar}}">Salvar</ion-button>
+    <ion-button expand="block"(click)="excluir()" color="danger"
+    disabled="{{editar}}">Exluir</ion-button>
+    
   </ion-list>
-  <ion-button expand="block" (click)="cadastrar()">Cadastrar</ion-button>
+
 </ion-content>

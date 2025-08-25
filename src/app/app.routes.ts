@@ -14,4 +14,8 @@ export const routes: Routes = [
     path: 'cadastrar',
     loadComponent: () => import('./view/cadastrar/cadastrar.page').then( m => m.CadastrarPage)
   },
+  {
+    path: 'detalhar',
+    loadComponent: () => import('./view/detalhar/detalhar.page').then( m => m.DetalharPage)
+  },
 ];

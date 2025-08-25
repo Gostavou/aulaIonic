@@ -1,35 +1,34 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ContatoService } from 'src/app/service/contato.service';
-import { DatePipe, CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { FormsModule } from '@angular/forms';
+import { addIcons } from 'ionicons';
+import { add, createOutline, trash } from 'ionicons/icons'
+import { Contato } from 'src/app/model/contato';
+import { ContatoService } from 'src/app/service/contato.service';
+
+addIcons({add:add, 'create-outline':createOutline})
 
 @Component({
   selector: 'app-home',
-  templateUrl: './home.page.html',
-  styleUrls: ['./home.page.scss'],
-  standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule],
-  providers: [DatePipe]
+  templateUrl: 'home.page.html',
+  styleUrls: ['home.page.scss'],
+  imports: [IonicModule, CommonModule],
 })
 export class HomePage {
-  contatos: any[];
+  contatos: Contato[];
 
-  constructor(
-    private router: Router,
-    private contatoService: ContatoService,
-    private datePipe: DatePipe
-  ) {
+  constructor(private router: Router,
+    private contatoService: ContatoService
+  ) { 
     this.contatos = this.contatoService.contatos;
   }
 
-  formatarData(data: string): string {
-    if (!data) return 'Não informada';
-    return this.datePipe.transform(data, 'dd/MM/yyyy') || data;
+  irParaCadastrar(){
+    this.router.navigate(["/cadastrar"])
   }
-
-  irParaCadastrar() {
-    this.router.navigate(['/cadastrar']);
-  }
+  detalhar(contato: Contato){
+  
+  this.router.navigateByUrl('/detalhar', {state: {objeto:contato}})
+}
 }
